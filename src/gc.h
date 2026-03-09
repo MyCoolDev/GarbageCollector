@@ -4,9 +4,9 @@
 #include "Struct/object.h"
 #include "Struct/stack.c"
 
-bool pushInt(Stack* stack, int value);
-bool pushPair(Stack* stack, Object* head, Object* tail);
-void markAll(Stack* stack);
+void markAll(Stack* vm);
 void mark(Object* obj);
+Object* sweep(Object* obj);
+Object* sweepAll(Object* obj);
 
 #endif

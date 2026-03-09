@@ -10,4 +10,10 @@ typedef struct s_stack {
     int size;
 } Stack;
 
+Stack *newStack();
+bool push(Stack* stack, Object* obj);
+Object* pop(Stack* stack);
+bool pushInt(Stack* stack, int value);
+bool pushPair(Stack* stack, Object* head, Object* tail);
+
 #endif

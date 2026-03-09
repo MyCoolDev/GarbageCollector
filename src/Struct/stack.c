@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include "stack.h"
 
-Stack *newStack()
+Stack* newStack()
 {
     Stack* stack = malloc(sizeof(Stack));
     stack->size = 0;
@@ -28,4 +28,21 @@ Object* pop(Stack* stack)
         return NULL;
 
     return stack->stack[--stack->size];
+}
+
+bool pushInt(Stack* stack, int value)
+{
+    Object* newObj = createObject(OBJ_INT);
+    newObj->value = value;
+
+    return push(stack, newObj);
+}
+
+bool pushPair(Stack* stack, Object* head, Object* tail)
+{
+    Object* newObj = createObject(OBJ_PAIR);
+    newObj->head = head;
+    newObj->tail = tail;
+
+    return push(stack, newObj);
 }

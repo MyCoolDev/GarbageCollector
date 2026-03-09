@@ -14,23 +14,13 @@
  */
 
 #include "gc.h"
+#include "Struct/object.h"
+#include <stdlib.h>
 
-bool pushInt(Stack* stack, int value)
-{
-    Object* newObj = createObject(OBJ_INT);
-    newObj->value = value;
-
-    return push(stack, newObj);
-}
-
-bool pushPair(Stack* stack, Object* head, Object* tail)
-{
-    Object* newObj = createObject(OBJ_PAIR);
-    newObj->head = head;
-    newObj->tail = tail;
-
-    return push(stack, newObj);
-}
+/**
+ * Mark all the "In Use Objects",
+ * "In Use Objects" are reachable from the stack.
+ */
 
 void markAll(Stack* stack)
 {
@@ -39,6 +29,9 @@ void markAll(Stack* stack)
     }
 }
 
+/**
+ * The actual change of the mark byte in the mem.
+ */
 void mark(Object* obj)
 {
     if (obj->marked) return;
@@ -51,7 +44,46 @@ void mark(Object* obj)
     }   
 }
 
-void sweep(Object* obj)
+/**
+ * Sweep all the unmarked Objects. Using the sweep func.
+ */
+Object* sweepAll(Object* obj)
 {
-    
+    if (obj->next == NULL)
+        return sweep(obj);
+
+    obj->next = sweepAll(obj->next);
+
+    return sweep(obj);
+}
+
+/**
+ * free the unmarked Objects and return his "next" pointer,
+ * return the obj if marked.
+ */
+Object* sweep(Object* obj)
+{
+    if (obj->marked)
+        return obj;
+
+    if (obj->type == OBJ_PAIR)
+    {
+        sweep(obj->head);
+        sweep(obj->tail);
+    }
+
+    Object* next = obj->next;
+    free(obj);
+
+    return next;
+}
+
+
+/**
+ * Garbage collector.
+ */
+void gc(Stack* stack)
+{
+    markAll(stack);
+    sweepAll(stack->first);
 }
